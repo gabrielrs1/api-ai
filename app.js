@@ -5,8 +5,23 @@ const app = express();
 
 app.use(express.json());
 
-app.get("/ai", (req, res) => {
-    res.send("AI APi is running. Hello World!")
+const url = "http://localhost:11434/api/chat"
+
+app.post("/ai", async (req, res) => {
+    const { text } = req.body;
+
+    const returnAI = await axios.post(url, {
+        "model": "llama3.2:3b",
+        "messages": [
+            {
+                "role": "user",
+                "content": text
+            }
+        ],
+        "stream": false
+    });
+
+    res.json({ "message": returnAI.data.message.content });
 });
 
 app.listen(3000, () => {
